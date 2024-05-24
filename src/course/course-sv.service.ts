@@ -18,6 +18,7 @@ export class CourseSvService {
             date: new Date()
         });
        }catch(e){
+        console.log(e);
         return res.status(500).json({
             statusCode: 500,
             data: [],
