@@ -1,0 +1,57 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model CORECONCEPT {
+  id        Int      @id @default(autoincrement())
+  beginProp String?  @db.Text
+  middle    String?  @db.Text
+  advance   String?  @db.Text
+  DETAIL    DETAIL[]
+}
+
+model COURSE {
+  id         String @id @db.VarChar(20)
+  img        String @db.VarChar(255)
+  nameCourse String @db.VarChar(50)
+  idDetail   String @db.VarChar(20)
+  DETAIL     DETAIL @relation(fields: [idDetail], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "COURSE_ibfk_1")
+
+  @@index([idDetail], map: "idDetail")
+}
+
+model DETAIL {
+  id            String      @id @db.VarChar(20)
+  idCoreConcept Int
+  idFundamental Int
+  idIntroduce   Int
+  COURSE        COURSE[]
+  CORECONCEPT   CORECONCEPT @relation(fields: [idCoreConcept], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "DETAIL_ibfk_1")
+  FUNDAMENTAL   FUNDAMENTAL @relation(fields: [idFundamental], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "DETAIL_ibfk_2")
+  INTRODUCE     INTRODUCE   @relation(fields: [idIntroduce], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "DETAIL_ibfk_3")
+
+  @@index([idCoreConcept], map: "idCoreConcept")
+  @@index([idFundamental], map: "idFundamental")
+  @@index([idIntroduce], map: "idIntroduce")
+}
+
+model FUNDAMENTAL {
+  id         Int      @id @default(autoincrement())
+  definition String?  @db.Text
+  roadmap    String?  @db.Text
+  firstLook  String?  @db.Text
+  DETAIL     DETAIL[]
+}
+
+model INTRODUCE {
+  id           Int      @id @default(autoincrement())
+  history      String?  @db.Text
+  needed       String?  @db.Text
+  bestPractise String?  @db.Text
+  DETAIL       DETAIL[]
+}
