@@ -1,6 +1,6 @@
 FROM node:20-alpine
 
-WORKDIR /usr/src/app
+WORKDIR /app
 
 COPY package*.json .
 
@@ -12,6 +12,13 @@ RUN npx prisma generate
 
 COPY . .
 
-EXPOSE 3000/tcp
+RUN npm run build
 
-CMD [ "node", "dist/main.js" ]
+FROM node:20-alpine
+
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package*.json ./
+COPY --from=builder /app/dist ./dist
+
+EXPOSE 3000
+CMD [ "npm", "run", "start:prod" ]
