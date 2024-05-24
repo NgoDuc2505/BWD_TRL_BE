@@ -2,15 +2,15 @@ FROM node:20-alpine
 
 WORKDIR /usr/src/app
 
-COPY package*.json  ./
+COPY package*.json .
 
-RUN npm ci
+RUN npm install
+
+COPY prisma ./prisma/
+
+RUN npx prisma generate
 
 COPY . .
-RUN npx prisma init
-RUN npx prisma db pull
-RUN npx prisma generate
-RUN npm run build
 
 EXPOSE 3000/tcp
 
